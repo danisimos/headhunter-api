@@ -1,6 +1,5 @@
 package ru.itis.headhunter.models;
 
-import jdk.dynalink.linker.LinkerServices;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -27,7 +27,7 @@ public class Vacancy {
     private String title;
 
     @Column(name = "description")
-    private String fescription;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "company")
@@ -35,4 +35,7 @@ public class Vacancy {
 
     @OneToMany(mappedBy = "vacancy")
     private List<VacancyResponse> vacancyResponses;
+
+    @ManyToMany(mappedBy = "favoritesVacancies")
+    private Set<Account> inFavorites;
 }

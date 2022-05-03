@@ -1,9 +1,11 @@
-package ru.itis.headhunter.models;
+package ru.itis.headhunter.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.headhunter.models.Account;
+import ru.itis.headhunter.models.Company;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,22 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-public class Company {
+public class CompanyDto {
     public enum State {
         ACTIVE, DELETED
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "description")
     private String description;
-
-    @OneToMany(mappedBy = "company")
-    private List<Account> accounts;
 }

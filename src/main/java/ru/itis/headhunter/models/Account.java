@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -54,4 +54,9 @@ public class Account {
 
     @OneToMany(mappedBy = "account")
     private List<VacancyResponse> vacancyResponses;
+
+    @ManyToMany
+    @JoinTable(joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "vacancy_id", referencedColumnName = "id"))
+    private Set<Vacancy> favoritesVacancies;
 }
