@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ru.itis.headhunter.models.Account;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Data
@@ -14,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CompanyForm {
+    @NotBlank(message = "company name cannot be empty")
     private String name;
+    @NotBlank(message = "company description cannot be empty")
     private String description;
 }

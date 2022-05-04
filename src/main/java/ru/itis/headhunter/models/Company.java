@@ -29,5 +29,8 @@ public class Company {
     private String description;
 
     @OneToMany(mappedBy = "company")
+    private List<Vacancy> vacancies;
+
+    @OneToMany(mappedBy = "company")
     private List<Account> accounts;
 }

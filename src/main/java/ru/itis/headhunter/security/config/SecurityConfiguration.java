@@ -12,7 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.itis.headhunter.repositories.AccountsRepository;
-import ru.itis.headhunter.repositories.JwtTokenBlackListRepository;
 import ru.itis.headhunter.security.details.AccountUserDetailsService;
 import ru.itis.headhunter.security.filters.LogoutFilter;
 import ru.itis.headhunter.security.filters.TokenAuthenticationFilter;
@@ -27,7 +26,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final AccountUserDetailsService accountUserDetailsService;
     private final AccountsRepository accountsRepository;
     private final JwtProvider jwtProvider;
-    private final JwtTokenBlackListRepository jwtTokenBlackListRepository;
 
     @Bean
     @Override
@@ -44,11 +42,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         TokenAuthenticationFilter tokenAuthenticationFilter =
                 new TokenAuthenticationFilter(authenticationManagerBean(), objectMapper, accountsRepository, jwtProvider);
-        tokenAuthenticationFilter.setFilterProcessesUrl("/signIn/");
+        tokenAuthenticationFilter.setFilterProcessesUrl("/api/signIn/");
 
-        TokenAuthorizationFilter tokenAuthorizationFilter = new TokenAuthorizationFilter(objectMapper, jwtProvider, jwtTokenBlackListRepository);
+        TokenAuthorizationFilter tokenAuthorizationFilter = new TokenAuthorizationFilter(objectMapper, jwtProvider);
 
-        LogoutFilter logoutFilter = new LogoutFilter(jwtTokenBlackListRepository);
+        LogoutFilter logoutFilter = new LogoutFilter();
 
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -57,7 +55,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.addFilterAfter(logoutFilter, TokenAuthorizationFilter.class);
 
         http.authorizeRequests()
-                .antMatchers("/signIn/").permitAll()
-                .antMatchers("/**").authenticated();
+                .antMatchers("/api/signIn/").permitAll()
+                .antMatchers("/api/signUp/").permitAll()
+                .antMatchers("/api/**").authenticated();
     }
 }

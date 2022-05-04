@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.itis.headhunter.exceptions.AccountNotFoundException;
-import ru.itis.headhunter.repositories.JwtTokenBlackListRepository;
 import ru.itis.headhunter.security.jwt.JwtProvider;
 
 import javax.servlet.FilterChain;
@@ -19,10 +18,9 @@ import java.util.Collections;
 
 @RequiredArgsConstructor
 public class TokenAuthorizationFilter extends OncePerRequestFilter {
-    public static final String API_LOGIN = "/signIn/";
+    public static final String API_LOGIN = "/api/signIn/";
     private final ObjectMapper objectMapper;
     private final JwtProvider jwtProvider;
-    private final JwtTokenBlackListRepository jwtTokenBlackListRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -31,7 +29,7 @@ public class TokenAuthorizationFilter extends OncePerRequestFilter {
         } else {
             String token = jwtProvider.getToken(request);
             if(token != null) {
-                if(jwtProvider.validate(token) && !jwtTokenBlackListRepository.exists(token)) {
+                if(jwtProvider.validate(token)) {
                     try {
                         Authentication authentication = jwtProvider.getAuthentication(token);
                         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.itis.headhunter.repositories.JwtTokenBlackListRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,9 +13,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class LogoutFilter extends OncePerRequestFilter {
-    public static final String API_LOGOUT = "/logout/";
-
-    private final JwtTokenBlackListRepository jwtTokenBlackListRepository;
+    public static final String API_LOGOUT = "/api/logout/";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -24,7 +21,6 @@ public class LogoutFilter extends OncePerRequestFilter {
 
         if(request.getRequestURI().equals(API_LOGOUT) && authentication != null) {
             String token = (String) authentication.getPrincipal();
-            jwtTokenBlackListRepository.save(token);
 
             SecurityContextHolder.getContext();
         }
