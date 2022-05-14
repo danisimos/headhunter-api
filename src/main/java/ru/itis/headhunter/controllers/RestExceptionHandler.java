@@ -1,4 +1,4 @@
-package ru.itis.headhunter.controllers.exceptionshandler;
+package ru.itis.headhunter.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
