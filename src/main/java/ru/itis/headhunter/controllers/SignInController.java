@@ -4,12 +4,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.itis.api.SignInApi;
 import ru.itis.headhunter.dto.forms.SignInForm;
 
 @RestController
-public class SignInController {
-    @PostMapping("/api/signIn/")
-    public ResponseEntity<String> signIn(@RequestBody SignInForm body) {
+public class SignInController implements SignInApi {
+    @Override
+    public ResponseEntity<String> signIn(SignInForm body) {
         return ResponseEntity.ok("Success");
     }
 }

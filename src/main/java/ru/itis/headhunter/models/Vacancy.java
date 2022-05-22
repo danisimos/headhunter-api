@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +21,10 @@ public class Vacancy {
         ACTIVE, DELETED
     }
 
+    public enum Specialization {
+        IT, SALES, MANAGEMENT, SCIENCE, MEDICINE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,6 +34,16 @@ public class Vacancy {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "salary")
+    private Long salary;
+
+    @Enumerated(value = EnumType.STRING)
+    private Specialization specialization;
+
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private Timestamp createdAt;
 
     @ManyToOne
     @JoinColumn(name = "company")

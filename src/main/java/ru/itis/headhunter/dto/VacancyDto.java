@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.itis.headhunter.models.Company;
+import ru.itis.headhunter.models.Vacancy;
 import ru.itis.headhunter.models.VacancyResponse;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -19,7 +21,14 @@ public class VacancyDto {
         ACTIVE, DELETED
     }
 
+    public enum Specialization {
+        IT, SALES, MANAGEMENT, SCIENCE, MEDICINE
+    }
+
     private Long id;
+    private Long salary;
+    private Specialization specialization;
+    private Timestamp createdAt;
     private String title;
     private String description;
 }

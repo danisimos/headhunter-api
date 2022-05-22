@@ -4,8 +4,11 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.springframework.data.domain.Page;
 import ru.itis.headhunter.dto.CVDto;
 import ru.itis.headhunter.dto.CompanyDto;
+import ru.itis.headhunter.dto.pages.CVPageDto;
+import ru.itis.headhunter.dto.pages.CompaniesPageDto;
 import ru.itis.headhunter.models.CV;
 import ru.itis.headhunter.models.Company;
 
@@ -19,4 +22,11 @@ public abstract class CVMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void updateCVFromDto(CVDto cvDto, @MappingTarget CV cv);
+
+    public CVPageDto toCVPageDto(Page<CV> cvs) {
+        return CVPageDto.builder()
+                .cv(toCVDtoList(cvs.getContent()))
+                .totalPages(cvs.getTotalPages())
+                .build();
+    }
 }

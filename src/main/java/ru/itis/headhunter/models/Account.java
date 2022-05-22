@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +36,12 @@ public class Account {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "confirm_code")
+    private String confirmCode;
+
+    @Column(name = "confirm_code_expiration")
+    private Timestamp confirmCodeExpiration;
 
     @Column(name = "password")
     private String password;

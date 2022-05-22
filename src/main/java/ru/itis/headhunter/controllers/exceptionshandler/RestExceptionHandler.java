@@ -1,4 +1,4 @@
-package ru.itis.headhunter.controllers;
+package ru.itis.headhunter.controllers.exceptionshandler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,8 +7,11 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ru.itis.headhunter.exceptions.ConfirmCodeExpiredException;
+import ru.itis.headhunter.exceptions.EmailSendingException;
 import ru.itis.headhunter.exceptions.NotCompanyAccountException;
 import ru.itis.headhunter.exceptions.NotFoundException;
+import ru.itis.headhunter.exceptions.http.ExceptionDto;
 import ru.itis.headhunter.exceptions.http.ValidationExceptionDto;
 import ru.itis.headhunter.exceptions.http.ValidationExceptionResponse;
 
@@ -46,5 +49,19 @@ public class RestExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ValidationExceptionDto.builder().message(exception.getMessage()).build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> handleConfirmCodeExpiredException(ConfirmCodeExpiredException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ExceptionDto.builder().message(exception.getMessage()).build());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionDto> handleEmailSendingException(EmailSendingException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ExceptionDto.builder().message(exception.getMessage()).build());
     }
 }

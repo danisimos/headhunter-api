@@ -1,6 +1,9 @@
 package ru.itis.headhunter.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.itis.headhunter.dto.AccountDto;
@@ -10,6 +13,7 @@ import ru.itis.headhunter.dto.forms.VacancyForm;
 import ru.itis.headhunter.dto.mappers.AccountMapper;
 import ru.itis.headhunter.dto.mappers.VacancyMapper;
 import ru.itis.headhunter.dto.mappers.VacancyResponseMapper;
+import ru.itis.headhunter.dto.pages.VacanciesPageDto;
 import ru.itis.headhunter.exceptions.NotCompanyAccountException;
 import ru.itis.headhunter.exceptions.VacancyNotFoundException;
 import ru.itis.headhunter.exceptions.VacancyResponseNotFoundException;
@@ -23,6 +27,7 @@ import ru.itis.headhunter.security.details.AccountUserDetails;
 import ru.itis.headhunter.services.VacancyService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,9 @@ public class VacancyServiceImpl implements VacancyService {
     private final VacancyResponseMapper vacancyResponseMapper;
     private final VacancyResponseRepository vacancyResponseRepository;
     private final AccountMapper accountMapper;
+
+    @Value("${headhunter.default-page-size}")
+    private int defaultPageSize;
 
     @Override
     public VacancyDto addVacancy(VacancyForm vacancyForm) {
@@ -46,6 +54,8 @@ public class VacancyServiceImpl implements VacancyService {
                 .title(vacancyForm.getTitle())
                 .company(account.getCompany())
                 .description(vacancyForm.getDescription())
+                .salary(vacancyForm.getSalary())
+                .specialization(Vacancy.Specialization.valueOf(vacancyForm.getSpecialization().name()))
                 .build();
 
         account.getCompany().getVacancies().add(vacancy);
@@ -54,13 +64,14 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> getAllVacancies() {
-        return vacancyMapper.toVacancyDtoList(vacancyRepository.findAll());
+    public VacanciesPageDto getSortVacancies(Long page, Optional<String> sortBy) {
+        PageRequest pageRequest = PageRequest.of(page.intValue(), defaultPageSize, Sort.by(sortBy.orElse("id")).ascending());
+        return vacancyMapper.toVacanciesPageDto(vacancyRepository.findAll(pageRequest));
     }
-
     @Override
-    public List<VacancyDto> getAllByCompany(Long companyId) {
-        return vacancyMapper.toVacancyDtoList(vacancyRepository.findAllByCompanyId(companyId));
+    public VacanciesPageDto getAllByCompany(Long companyId, Long page, Optional<String> sortBy) {
+        PageRequest pageRequest = PageRequest.of(page.intValue(), defaultPageSize, Sort.by(sortBy.orElse("id")).ascending());
+        return vacancyMapper.toVacanciesPageDto(vacancyRepository.findAllByCompanyId(companyId, pageRequest));
     }
 
     @Override
@@ -96,7 +107,7 @@ public class VacancyServiceImpl implements VacancyService {
     }
 
     @Override
-    public List<VacancyDto> addVacancyToFavorites(Long vacancyId) {
+    public VacancyDto addVacancyToFavorites(Long vacancyId) {
         Account account = ((AccountUserDetails) SecurityContextHolder.getContext().getAuthentication().getCredentials()).getAccount();
 
         Vacancy vacancy = vacancyRepository.findById(vacancyId).orElseThrow(() -> new VacancyNotFoundException("no such vacancy"));
@@ -104,6 +115,13 @@ public class VacancyServiceImpl implements VacancyService {
         account.getFavoritesVacancies().add(vacancy);
         accountsRepository.save(account);
 
-        return vacancyMapper.toVacancyDtoList(account.getFavoritesVacancies().stream().toList());
+        return vacancyMapper.toVacancyDto(vacancy);
+    }
+
+    @Override
+    public VacanciesPageDto getAllBySpecialization(String specialization, Long page, Optional<String> sortBy) {
+        PageRequest pageRequest = PageRequest.of(page.intValue(), defaultPageSize, Sort.by(sortBy.orElse("id")).ascending());
+        return vacancyMapper.toVacanciesPageDto(vacancyRepository
+                .findAllBySpecialization(Vacancy.Specialization.valueOf(specialization), pageRequest));
     }
 }
