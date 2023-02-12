@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class HeadHunterApplication {
 
+    public static String API = "_api/v1";
 
     @Value("${api.title}")
     private String apiTitle;
